@@ -6,11 +6,12 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file (explicitly from project root)
+env_path = BASE_DIR / '.env'
+load_dotenv(env_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -78,9 +79,9 @@ WSGI_APPLICATION = 'edunova_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# Try to use PostgreSQL, fallback to SQLite if psycopg2 is not available
+# Try to use PostgreSQL with psycopg (v3), fallback to SQLite if not available
 try:
-    import psycopg2
+    import psycopg  # psycopg3
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

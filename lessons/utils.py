@@ -49,7 +49,6 @@ def generate_lesson_pdf(lesson):
     # Lazy import to avoid startup errors if dependencies aren't installed
     try:
         from weasyprint import HTML
-        from weasyprint.text.fonts import FontConfiguration
     except ImportError as e:
         raise ImportError(
             "WeasyPrint is not installed. Install it with: pip install WeasyPrint"
@@ -73,8 +72,7 @@ def generate_lesson_pdf(lesson):
     html_string = render_to_string('lessons/lesson_pdf.html', context)
     
     # Generate PDF
-    font_config = FontConfiguration()
-    pdf_file = HTML(string=html_string).write_pdf(font_config=font_config)
+    pdf_file = HTML(string=html_string).write_pdf()
     
     # Return as BytesIO
     return BytesIO(pdf_file)

@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ lesson.topic }} - Lesson PDF</title>
     <style>
         @page {
@@ -13,97 +12,203 @@
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
+            color: #2c3e50;
+            font-size: 11pt;
         }
         
         .header {
-            border-bottom: 3px solid #4a90e2;
+            border-bottom: 2px solid #667eea;
             padding-bottom: 20px;
             margin-bottom: 30px;
         }
         
         h1 {
             color: #2c3e50;
-            margin: 0 0 10px 0;
-            font-size: 28px;
+            margin: 0 0 15px 0;
+            font-size: 24pt;
+            font-weight: 600;
         }
         
         .meta-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 15px;
-            font-size: 14px;
-            color: #666;
+            font-size: 10pt;
+            color: #7f8c8d;
+            margin-top: 10px;
         }
         
         .meta-item {
-            display: flex;
-            align-items: center;
+            display: inline-block;
+            margin-right: 20px;
         }
         
         .meta-label {
-            font-weight: bold;
-            margin-right: 5px;
+            font-weight: 600;
+            color: #34495e;
         }
         
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             page-break-inside: avoid;
         }
         
         .section-title {
-            color: #4a90e2;
-            font-size: 20px;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e0e0e0;
+            color: #667eea;
+            font-size: 14pt;
+            margin-bottom: 12px;
+            font-weight: 600;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #e0e0e0;
         }
         
         .description {
+            line-height: 1.7;
+            font-size: 11pt;
+            color: #34495e;
             text-align: justify;
-            line-height: 1.8;
         }
         
-        .list {
-            margin: 10px 0;
-            padding-left: 25px;
+        .description p {
+            margin-bottom: 10px;
         }
         
-        .list li {
-            margin-bottom: 8px;
-            line-height: 1.6;
+        .description p:last-child {
+            margin-bottom: 0;
         }
         
         .activities-list {
-            list-style-type: disc;
+            list-style: none;
+            padding-left: 0;
+            margin: 10px 0;
+        }
+        
+        .activities-list li {
+            padding: 8px 0 8px 25px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+            color: #34495e;
+            position: relative;
+        }
+        
+        .activities-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14pt;
         }
         
         .questions-list {
             list-style-type: decimal;
+            padding-left: 25px;
+            margin: 10px 0;
+        }
+        
+        .questions-list li {
+            padding: 8px 0;
+            margin-bottom: 8px;
+            line-height: 1.6;
+            color: #34495e;
         }
         
         .summary {
-            background-color: #f5f5f5;
+            background: #f8f9fa;
             padding: 15px;
-            border-left: 4px solid #4a90e2;
+            border-left: 3px solid #667eea;
             margin-top: 20px;
+            font-size: 11pt;
+            line-height: 1.7;
+            color: #34495e;
+        }
+        
+        .summary p {
+            margin-bottom: 8px;
+        }
+        
+        .summary p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .images-section {
+            margin-top: 25px;
+        }
+        
+        .image-item {
+            text-align: center;
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+        
+        .image-item img {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .image-caption {
+            font-size: 9pt;
+            color: #95a5a6;
+            margin-top: 5px;
+        }
+        
+        .videos-section {
+            margin-top: 25px;
+        }
+        
+        .video-list {
+            list-style: none;
+            padding-left: 0;
+            margin: 10px 0;
+        }
+        
+        .video-item {
+            padding: 10px 0;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            page-break-inside: avoid;
+        }
+        
+        .video-item:last-child {
+            border-bottom: none;
+        }
+        
+        .video-link {
+            color: #e74c3c;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 11pt;
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        .video-link-title {
+            color: #e74c3c;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 11pt;
+        }
+        
+        .video-url {
+            font-size: 9pt;
+            color: #7f8c8d;
+            word-break: break-all;
+            margin-top: 3px;
+            font-family: 'Courier New', monospace;
         }
         
         .footer {
             margin-top: 40px;
-            padding-top: 20px;
+            padding-top: 15px;
             border-top: 1px solid #e0e0e0;
-            font-size: 12px;
-            color: #999;
+            font-size: 9pt;
+            color: #95a5a6;
             text-align: center;
         }
         
-        .no-content {
-            color: #999;
-            font-style: italic;
+        .footer-logo {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 3px;
         }
     </style>
 </head>
@@ -112,17 +217,19 @@
         <h1>{{ lesson.topic }}</h1>
         <div class="meta-info">
             <div class="meta-item">
-                <span class="meta-label">Subject:</span>
-                <span>{{ lesson.subject }}</span>
+                <span class="meta-label">Subject:</span> {{ lesson.subject }}
             </div>
             <div class="meta-item">
-                <span class="meta-label">Grade Level:</span>
-                <span>{{ lesson.grade_level }}</span>
+                <span class="meta-label">Grade:</span> {{ lesson.grade_level }}
             </div>
             <div class="meta-item">
-                <span class="meta-label">Duration:</span>
-                <span>{{ lesson.duration_minutes }} minutes</span>
+                <span class="meta-label">Duration:</span> {{ lesson.duration_minutes }} minutes
             </div>
+            {% if lesson.user %}
+            <div class="meta-item">
+                <span class="meta-label">Created by:</span> {{ lesson.user.get_full_name|default:lesson.user.username }}
+            </div>
+            {% endif %}
         </div>
     </div>
     
@@ -138,7 +245,7 @@
     {% if activities %}
     <div class="section">
         <h2 class="section-title">Activities</h2>
-        <ul class="list activities-list">
+        <ul class="activities-list">
             {% for activity in activities %}
             <li>{{ activity }}</li>
             {% endfor %}
@@ -149,11 +256,42 @@
     {% if questions %}
     <div class="section">
         <h2 class="section-title">Questions</h2>
-        <ol class="list questions-list">
+        <ol class="questions-list">
             {% for question in questions %}
             <li>{{ question }}</li>
             {% endfor %}
         </ol>
+    </div>
+    {% endif %}
+    
+    {% if image_urls %}
+    <div class="section images-section">
+        <h2 class="section-title">Images</h2>
+        {% for image_url in image_urls|slice:":4" %}
+        <div class="image-item">
+            <img src="{{ image_url }}" alt="Lesson image {{ forloop.counter }}" onerror="this.style.display='none'">
+            <div class="image-caption">Image {{ forloop.counter }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if video_links %}
+    <div class="section videos-section">
+        <h2 class="section-title">Videos</h2>
+        <ul class="video-list">
+            {% for video in video_links|slice:":10" %}
+            <li class="video-item">
+                {% if video.url %}
+                <a href="{{ video.url }}" class="video-link" target="_blank">{{ video.title|default:"Untitled Video" }}</a>
+                <div class="video-url">{{ video.url }}</div>
+                {% else %}
+                <div class="video-link-title">{{ video.title|default:"Untitled Video" }}</div>
+                <div class="video-url">No URL available</div>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
     </div>
     {% endif %}
     
@@ -167,9 +305,11 @@
     {% endif %}
     
     <div class="footer">
-        <p>Generated from EduNova - Lesson ID: {{ lesson.id }}</p>
-        <p>Created: {{ lesson.created_at|date:"F d, Y" }}</p>
+        <div class="footer-logo">EduNova</div>
+        <p>Lesson ID: {{ lesson.id }} | Created: {{ lesson.created_at|date:"F d, Y" }}</p>
+        {% if lesson.is_public %}
+        <p style="color: #27ae60; margin-top: 3px;">Public Lesson</p>
+        {% endif %}
     </div>
 </body>
 </html>
-

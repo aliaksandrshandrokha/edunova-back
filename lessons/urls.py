@@ -10,6 +10,9 @@ router.register(r'lessons', LessonViewSet, basename='lesson')
 
 urlpatterns = [
     # Public lesson endpoint (must come before router to avoid conflicts)
+    path('lessons/public/', 
+         LessonPublicView.as_view({'get': 'list'}), 
+         name='lesson-public-list'),
     path('lessons/public/<slug:slug>/', 
          LessonPublicView.as_view({'get': 'retrieve'}), 
          name='lesson-public'),
