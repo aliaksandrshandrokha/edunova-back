@@ -88,6 +88,7 @@ class LessonViewSet(viewsets.ModelViewSet):
         
         # 1. Generate content with OpenAI (try, but allow fallback)
         description = ""
+        content = ""
         activities = []
         questions = []
         summary = ""
@@ -101,6 +102,7 @@ class LessonViewSet(viewsets.ModelViewSet):
             )
             
             description = ai_content['description']
+            content = ai_content['content']
             activities = ai_content['activities']
             questions = ai_content['questions']
             summary = ai_content['summary']
@@ -114,6 +116,28 @@ class LessonViewSet(viewsets.ModelViewSet):
                 f"and is designed for a {duration}-minute session. "
                 f"Students will explore the fundamental principles of {topic} through interactive activities and discussions."
             )
+            # Generate fallback content based on duration
+            if duration <= 30:
+                content = (
+                    f"{topic} is an important concept in {subject} that {grade} students should understand. "
+                    f"This lesson provides an overview of the key ideas and principles related to {topic}. "
+                    f"Students will learn the fundamental aspects and how they apply in real-world contexts."
+                )
+            elif duration <= 60:
+                content = (
+                    f"{topic} is a significant topic in {subject} that requires careful study. "
+                    f"This lesson explores the main concepts, principles, and applications of {topic}. "
+                    f"Students will gain a solid understanding of how {topic} works and why it matters in {subject}. "
+                    f"We will examine examples and discuss practical applications that help illustrate the key ideas."
+                )
+            else:
+                content = (
+                    f"{topic} represents a comprehensive area of study within {subject} that demands thorough exploration. "
+                    f"This extended lesson delves deep into the concepts, mechanisms, and real-world significance of {topic}. "
+                    f"Students will engage with detailed explanations, multiple examples, and in-depth discussions. "
+                    f"We will cover the foundational principles, examine various applications, and explore how {topic} connects to broader themes in {subject}. "
+                    f"Through this comprehensive approach, students will develop a nuanced understanding of {topic} and its importance."
+                )
             activities = [
                 f"Warm-up discussion on prior knowledge about {topic}",
                 f"Interactive demonstration related to {subject}",
@@ -135,6 +159,28 @@ class LessonViewSet(viewsets.ModelViewSet):
                 f"and is designed for a {duration}-minute session. "
                 f"Students will explore the fundamental principles of {topic} through interactive activities and discussions."
             )
+            # Generate fallback content based on duration
+            if duration <= 30:
+                content = (
+                    f"{topic} is an important concept in {subject} that {grade} students should understand. "
+                    f"This lesson provides an overview of the key ideas and principles related to {topic}. "
+                    f"Students will learn the fundamental aspects and how they apply in real-world contexts."
+                )
+            elif duration <= 60:
+                content = (
+                    f"{topic} is a significant topic in {subject} that requires careful study. "
+                    f"This lesson explores the main concepts, principles, and applications of {topic}. "
+                    f"Students will gain a solid understanding of how {topic} works and why it matters in {subject}. "
+                    f"We will examine examples and discuss practical applications that help illustrate the key ideas."
+                )
+            else:
+                content = (
+                    f"{topic} represents a comprehensive area of study within {subject} that demands thorough exploration. "
+                    f"This extended lesson delves deep into the concepts, mechanisms, and real-world significance of {topic}. "
+                    f"Students will engage with detailed explanations, multiple examples, and in-depth discussions. "
+                    f"We will cover the foundational principles, examine various applications, and explore how {topic} connects to broader themes in {subject}. "
+                    f"Through this comprehensive approach, students will develop a nuanced understanding of {topic} and its importance."
+                )
             activities = [
                 f"Warm-up discussion on prior knowledge about {topic}",
                 f"Interactive demonstration related to {subject}",
@@ -175,6 +221,7 @@ class LessonViewSet(viewsets.ModelViewSet):
             "grade_level": grade,
             "duration_minutes": duration,
             "description": description,
+            "content": content,
             "activities": activities,
             "questions": questions,
             "summary": summary,

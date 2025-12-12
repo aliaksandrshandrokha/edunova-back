@@ -17,6 +17,7 @@ class Lesson(models.Model):
     grade_level = models.CharField(max_length=50)
     duration_minutes = models.IntegerField()
     description = models.TextField(blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
     activities = models.JSONField(default=list, blank=True)
     questions = models.JSONField(default=list, blank=True)
     summary = models.TextField(blank=True, null=True)

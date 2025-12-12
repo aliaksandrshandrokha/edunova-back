@@ -48,6 +48,7 @@ def generate_lesson_content(
     Returns:
         Dictionary containing:
         - description: str (2-3 paragraphs)
+        - content: str (main lesson text, length varies by duration)
         - activities: List[str] (3-6 activities)
         - questions: List[str] (4-8 questions)
         - summary: str (2-3 sentences)
@@ -62,6 +63,20 @@ def generate_lesson_content(
             "OpenAI API key not configured. Please set OPENAI_API_KEY in your environment variables."
         )
     
+    # Determine content length based on duration
+    if duration_minutes <= 30:
+        content_instruction = "Write EXACTLY 2-3 paragraphs (approximately 150-250 words) providing a brief overview of the topic, covering only the key concepts. Keep it concise and focused. This is a SHORT lesson, so be brief."
+        content_length = "2-3 paragraphs (150-250 words)"
+        word_count = "150-250 words"
+    elif duration_minutes <= 60:
+        content_instruction = "Write EXACTLY 4-6 paragraphs (approximately 400-600 words) providing a standard lesson with moderate detail. Include explanations, examples, and connections to real-world applications. This is a MEDIUM-LENGTH lesson, so provide substantial content."
+        content_length = "4-6 paragraphs (400-600 words)"
+        word_count = "400-600 words"
+    else:
+        content_instruction = "Write EXACTLY 6-10 paragraphs (approximately 800-1200 words) providing a comprehensive lesson with detailed explanations. Include multiple sections or subtopics, in-depth examples, and thorough coverage of the topic. This is a LONG lesson, so be comprehensive and detailed."
+        content_length = "6-10 paragraphs (800-1200 words)"
+        word_count = "800-1200 words"
+    
     # Construct the prompt
     prompt = f"""You are an expert educational content creator. Generate comprehensive lesson content for the following:
 
@@ -73,19 +88,24 @@ Duration: {duration_minutes} minutes
 Please provide:
 1. Description: Write 2-3 paragraphs explaining the lesson topic in an engaging, age-appropriate way for {grade_level} students studying {subject}.
 
-2. Activities: Provide 3-6 classroom activities (as a numbered list) that students can do to learn about {topic}. Each activity should be practical and suitable for a {duration_minutes}-minute lesson.
+2. Content: {content_instruction} This is the main lesson text - like an article or core content that students will read. IMPORTANT: The lesson duration is {duration_minutes} minutes, so the content length MUST match this duration. For a {duration_minutes}-minute lesson, generate approximately {word_count} of content. Make it educational, engaging, and appropriate for {grade_level} students. The content should be structured as a flowing article that teaches about {topic} in the context of {subject}.
 
-3. Questions: Provide 4-8 practice questions (as a numbered list) that test understanding of {topic}. Include a mix of comprehension and application questions.
+3. Activities: Provide 3-6 classroom activities (as a numbered list) that students can do to learn about {topic}. Each activity should be practical and suitable for a {duration_minutes}-minute lesson.
 
-4. Summary: Write a 2-3 sentence conclusion that summarizes the key takeaways from this lesson.
+4. Questions: Provide 4-8 practice questions (as a numbered list) that test understanding of {topic}. Include a mix of comprehension and application questions.
+
+5. Summary: Write a 2-3 sentence conclusion that summarizes the key takeaways from this lesson.
 
 Format your response as a JSON object with the following structure:
 {{
     "description": "2-3 paragraphs of text",
+    "content": "{content_length} of main lesson text - MUST be approximately {word_count}",
     "activities": ["Activity 1", "Activity 2", ...],
     "questions": ["Question 1", "Question 2", ...],
     "summary": "2-3 sentence summary"
 }}
+
+CRITICAL: The "content" field length MUST be proportional to the {duration_minutes}-minute duration. Shorter lessons ({duration_minutes} minutes) require shorter content, longer lessons require significantly longer content. Do not generate similar lengths for different durations.
 
 Return ONLY the JSON object, no additional text or markdown formatting."""
 
@@ -103,7 +123,7 @@ Return ONLY the JSON object, no additional text or markdown formatting."""
                 }
             ],
             temperature=0.7,
-            max_tokens=2000,
+            max_tokens=3000,
             response_format={"type": "json_object"}  # Request JSON response
         )
         
@@ -130,6 +150,7 @@ Return ONLY the JSON object, no additional text or markdown formatting."""
         # Validate and structure the response
         return {
             "description": result.get("description", ""),
+            "content": result.get("content", ""),
             "activities": result.get("activities", []),
             "questions": result.get("questions", []),
             "summary": result.get("summary", "")
