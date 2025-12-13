@@ -1,6 +1,6 @@
 # EduNova Backend
 
-Django REST Framework backend for EduNova application with JWT authentication and PostgreSQL.
+Django REST Framework backend for EduNova application with JWT authentication, PostgreSQL, and AI-powered lesson generation.
 
 ## Features
 
@@ -10,6 +10,13 @@ Django REST Framework backend for EduNova application with JWT authentication an
 - CORS enabled for React frontend
 - User registration and authentication
 - User profiles with full_name field
+- AI-powered lesson generation using OpenAI
+- Lesson management (CRUD operations)
+- Public lesson sharing
+- PDF export functionality
+- Swagger/OpenAPI documentation
+- Health check endpoint
+- Integration with Unsplash (images) and YouTube (videos)
 
 ## Setup Instructions
 
@@ -46,6 +53,15 @@ DB_USER=postgres
 DB_PASSWORD=your-db-password
 DB_HOST=localhost
 DB_PORT=5432
+
+# OpenAI API Key (required for lesson generation)
+OPENAI_API_KEY=your-openai-api-key-here
+
+# Unsplash API (optional, for image search)
+UNSPLASH_ACCESS_KEY=your-unsplash-access-key
+
+# YouTube API (optional, for video search)
+YOUTUBE_API_KEY=your-youtube-api-key
 ```
 
 ### 4. Set Up PostgreSQL Database
@@ -129,6 +145,18 @@ python manage.py runserver
 The API will be available at `http://localhost:8000`
 
 ## API Endpoints
+
+### Health Check
+
+- **GET** `/api/health/`
+- **Response:**
+  ```json
+  {
+    "status": "healthy",
+    "service": "EduNova API",
+    "version": "1.0.0"
+  }
+  ```
 
 ### Authentication Endpoints
 
@@ -226,6 +254,111 @@ The API will be available at `http://localhost:8000`
   }
   ```
 
+### Lesson Endpoints
+
+All lesson endpoints require authentication (Bearer token) unless specified otherwise.
+
+#### Generate Lesson Content
+- **POST** `/api/lessons/generate/`
+- **Headers:** `Authorization: Bearer <access_token>`
+- **Body:**
+  ```json
+  {
+    "topic": "Photosynthesis",
+    "subject": "Science",
+    "grade_level": "Grade 5",
+    "duration_minutes": 45
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "topic": "Photosynthesis",
+    "subject": "Science",
+    "grade_level": "Grade 5",
+    "duration_minutes": 45,
+    "description": "...",
+    "content": "...",
+    "activities": ["...", "..."],
+    "questions": ["...", "..."],
+    "summary": "...",
+    "image_urls": ["...", "..."],
+    "video_links": [
+      {"title": "...", "url": "..."}
+    ]
+  }
+  ```
+
+#### List User's Lessons
+- **GET** `/api/lessons/`
+- **Headers:** `Authorization: Bearer <access_token>`
+- **Query Parameters:**
+  - `is_public` (optional): Filter by public/private status
+  - `subject` (optional): Filter by subject
+  - `grade_level` (optional): Filter by grade level
+
+#### Create Lesson
+- **POST** `/api/lessons/`
+- **Headers:** `Authorization: Bearer <access_token>`
+- **Body:**
+  ```json
+  {
+    "topic": "Photosynthesis",
+    "subject": "Science",
+    "grade_level": "Grade 5",
+    "duration_minutes": 45,
+    "description": "...",
+    "content": "...",
+    "activities": ["...", "..."],
+    "questions": ["...", "..."],
+    "summary": "...",
+    "image_urls": ["...", "..."],
+    "video_links": [{"title": "...", "url": "..."}],
+    "is_public": false
+  }
+  ```
+
+#### Get Lesson Details
+- **GET** `/api/lessons/{id}/`
+- **Headers:** `Authorization: Bearer <access_token>`
+
+#### Update Lesson
+- **PUT/PATCH** `/api/lessons/{id}/`
+- **Headers:** `Authorization: Bearer <access_token>`
+
+#### Delete Lesson
+- **DELETE** `/api/lessons/{id}/`
+- **Headers:** `Authorization: Bearer <access_token>`
+
+#### Export Lesson as PDF
+- **GET** `/api/lessons/{id}/export-pdf/`
+- **Headers:** `Authorization: Bearer <access_token>`
+- **Response:** PDF file download
+
+#### Toggle Public Status
+- **POST** `/api/lessons/{id}/toggle-public/`
+- **Headers:** `Authorization: Bearer <access_token>`
+
+### Public Lesson Endpoints
+
+These endpoints do not require authentication.
+
+#### List Public Lessons
+- **GET** `/api/lessons/public/`
+- **Query Parameters:**
+  - `subject` (optional): Filter by subject
+  - `grade_level` (optional): Filter by grade level
+  - `search` (optional): Search by topic
+
+#### Get Public Lesson by Slug
+- **GET** `/api/lessons/public/{slug}/`
+
+### API Documentation
+
+- **Swagger UI:** `http://localhost:8000/api/docs/`
+- **ReDoc:** `http://localhost:8000/api/redoc/`
+- **OpenAPI Schema:** `http://localhost:8000/api/schema/`
+
 ## Frontend Integration
 
 ### Using with React
@@ -259,6 +392,16 @@ edunova_backend/
 │   ├── views.py          # API views
 │   ├── urls.py           # URL routing
 │   └── signals.py        # Profile auto-creation
+├── lessons/              # Lessons app
+│   ├── models.py         # Lesson model
+│   ├── serializers.py    # Lesson serializers
+│   ├── views.py          # Lesson views
+│   ├── urls.py           # Lesson URL routing
+│   ├── services/         # Business logic
+│   │   ├── openai_service.py    # OpenAI integration
+│   │   ├── unsplash_service.py  # Unsplash integration
+│   │   └── youtube_service.py   # YouTube integration
+│   └── templates/        # PDF templates
 ├── edunova_backend/      # Project settings
 │   ├── settings.py       # Django settings
 │   └── urls.py           # Root URL config
@@ -266,6 +409,23 @@ edunova_backend/
 ├── requirements.txt
 └── .env.example
 ```
+
+## External API Integrations
+
+### OpenAI API
+- Used for generating lesson content (description, main content, activities, questions, summary)
+- Requires `OPENAI_API_KEY` in `.env`
+- Model used: `gpt-3.5-turbo-16k`
+
+### Unsplash API (Optional)
+- Used for fetching relevant images for lessons
+- Requires `UNSPLASH_ACCESS_KEY` in `.env`
+- Falls back gracefully if not configured
+
+### YouTube API (Optional)
+- Used for fetching educational videos
+- Requires `YOUTUBE_API_KEY` in `.env`
+- Falls back gracefully if not configured
 
 ## Development
 
@@ -279,6 +439,16 @@ python manage.py test
 
 Visit `http://localhost:8000/admin/` after creating a superuser.
 
+### Running Migrations
+
+```bash
+# Create new migrations
+python manage.py makemigrations
+
+# Apply migrations
+python manage.py migrate
+```
+
 ## Production Considerations
 
 1. Set `DEBUG=False` in production
@@ -288,4 +458,7 @@ Visit `http://localhost:8000/admin/` after creating a superuser.
 5. Set up proper CORS origins for production domain
 6. Use HTTPS in production
 7. Configure proper JWT token lifetimes
-
+8. Set up proper OpenAI API rate limiting
+9. Configure proper file storage for PDF exports
+10. Set up logging and monitoring
+11. Use environment variables for all sensitive keys
