@@ -100,6 +100,8 @@ WSGI_APPLICATION = 'edunova_backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 # Try to use PostgreSQL with psycopg (v3), fallback to SQLite if not available
+print("DATABASE_URL =", os.getenv("DATABASE_URL"))
+
 DATABASES = {
     "default": dj_database_url.config(
         default=os.getenv("DATABASE_URL"),  # <- берём переменную Railway
